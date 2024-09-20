@@ -13,7 +13,7 @@ export const TaskModelSchema = z.object({
 });
 
 export const CreateTaskSchema = TaskModelSchema.pick({ name: true, description: true, status: true, timeTodo: true, deadline: true });
-export const GetTaskSchema = TaskModelSchema.pick({ id: true, userId: true });
+export const GetTaskSchema = TaskModelSchema.omit({ createdAt: true, updatedAt: true });
 export const UpdateTaskSchema = z.object({
     name: z.string().optional(),
     description: z.string().nullable().optional(),

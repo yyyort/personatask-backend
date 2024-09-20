@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { createTaskService, deleteTaskService, getAllTasksService, getTaskService, updateTaskService } from "../service/tasks.service";
-import { CreateTaskType, TaskModelType, UpdateTaskType } from "../model/tasks.model";
+import { CreateTaskType, GetTaskType, TaskModelType, UpdateTaskType } from "../model/tasks.model";
 
 export const getTasks = async (req: Request, res: Response) => {
     const { userId, id } = req.params;
@@ -8,7 +8,7 @@ export const getTasks = async (req: Request, res: Response) => {
     try {
         if (id) {
             //get task
-            const tasks = await getTaskService({ userId, id: Number(id) });
+            const tasks: GetTaskType[] = await getTaskService({ userId, id: Number(id) });
             res.json(tasks);
         } else {
             //get all tasks
@@ -25,7 +25,7 @@ export const createTask = async (req: Request, res: Response) => {
     const data: CreateTaskType = req.body;
 
     try {
-        const task: TaskModelType = await createTaskService(data, userId);
+        const task: GetTaskType = await createTaskService(data, userId);
         res.status(201).json({ message: 'Task created successfully', task });
     } catch (error: any) {
         res.status(400).json({ message: error.message });

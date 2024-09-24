@@ -28,3 +28,15 @@ export const taskTable = pgTable("task_table", {
 
 export type InsertTask = typeof taskTable.$inferInsert;
 export type SelectTask = typeof taskTable.$inferSelect;
+
+export const noteTable = pgTable("note_table", {
+    id: serial('id').primaryKey().unique().notNull(),
+    userId: uuid('user_id').references(() => usersTable.id).notNull(),
+    title: text('title').notNull(),
+    content: text('content'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate( () => new Date() ),
+});
+
+export type InsertNote = typeof noteTable.$inferInsert;
+export type SelectNote = typeof noteTable.$inferSelect;

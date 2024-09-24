@@ -8,6 +8,7 @@ export const TaskModelSchema = z.object({
     status: z.enum(["due", "done", "overdue"]),
     timeTodo: z.date().nullable().optional(),
     deadline: z.date().nullable().optional(),
+    routineId: z.number().nullable().optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
 });

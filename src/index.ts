@@ -7,6 +7,7 @@ import { errorHandler } from './middleware/errorHandler';
 import userRoutes from './routes/user.routes';
 import taskRoutes from './routes/tasks.route';
 import noteRoutes from './routes/note.route';
+import routineRoutes from './routes/routine.route';
 
 const app = express();
 const PORT = 4000;
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 app.use('/api', userRoutes);
 app.use('/api', taskRoutes);
 app.use('/api', noteRoutes);
+app.use('/api', routineRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -2,8 +2,6 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { CreateTaskType, GetTaskType, TaskModelType, UpdateTaskType } from "../model/tasks.model";
 import { taskTable } from "../schema";
-import { create } from "domain";
-import e from "express";
 
 //create task
 export async function createTaskService(data: CreateTaskType, userId: string) {

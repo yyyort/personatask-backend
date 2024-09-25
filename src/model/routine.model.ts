@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { NoteModelSchema } from "./notes.model";
 import { TaskModelSchema } from "./tasks.model";
 
 export const RoutineModelSchema = z.object({

@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import { logEvents } from "./logger";
 
-export const errorHandler = (err: any, req:Request, res:Response, next:NextFunction) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     logEvents(`${err.name}: ${err.message}\t${req.method}\t${req.url}\t${req.headers.origin}`, 'errLog.log')
     console.log(err.stack)
 
@@ -12,4 +12,6 @@ export const errorHandler = (err: any, req:Request, res:Response, next:NextFunct
     res.json({
         message: err.message
     })
+
+    next()
 }

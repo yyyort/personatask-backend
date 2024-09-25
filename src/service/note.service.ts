@@ -20,8 +20,8 @@ export async function createNoteService(data: CreateNoteType, userId: string) {
       .returning();
 
     return note[0];
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }
 
@@ -38,8 +38,8 @@ export async function getNoteService(noteId: number, userId: string) {
     }
 
     return note[0];
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }
 
@@ -51,8 +51,8 @@ export async function getAllNotesService(userId: string) {
       .where(eq(noteTable.userId, userId));
 
     return notes;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }
 
@@ -77,8 +77,8 @@ export async function updateNoteService(
     }
 
     return note[0];
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }
 
@@ -95,7 +95,7 @@ export async function deleteNoteService(noteId: number, userId: string) {
     }
 
     return note[0];
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
   }
 }

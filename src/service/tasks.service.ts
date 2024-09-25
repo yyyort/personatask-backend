@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../db";
-import { CreateTaskType, GetTaskType, TaskModelType, UpdateTaskType } from "../model/tasks.model";
+import { CreateTaskType, GetTaskType, UpdateTaskType } from "../model/tasks.model";
 import { taskTable } from "../schema";
 
 //create task
@@ -25,8 +25,8 @@ export async function createTaskService(data: CreateTaskType, userId: string) {
         });
 
         return task[0];
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error((error as Error).message);
     }
 };
 
@@ -57,8 +57,8 @@ export async function getTaskService(data: { userId: string, id: number }) {
         }
 
         return tasks;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error((error as Error).message);
     }
 };
 
@@ -86,8 +86,8 @@ export async function getAllTasksService(userId: string) {
         }
 
         return tasks;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error((error as Error).message);
     }
 };
 
@@ -118,8 +118,8 @@ export async function updateTaskService(data: UpdateTaskType, id: number, userId
         }
 
         return task[0];
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error((error as Error).message);
     }
 };
 
@@ -147,7 +147,7 @@ export async function deleteTaskService(data: { userId: string, id: number }) {
         }
 
         return task[0];
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error((error as Error).message);
     }
 };

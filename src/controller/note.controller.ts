@@ -15,8 +15,12 @@ export const getNotes = async (req: Request, res: Response) => {
             const notes = await getAllNotesService(userId);
             res.json(notes);
         }
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        if ((error as Error).message === 'Note not found') {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        res.status(500).json({ message: (error as Error).message });
     }
 }
 
@@ -31,8 +35,8 @@ export const createNote = async (req: Request, res: Response) => {
         const note = await createNoteService(data, userId);
 
         res.status(201).json({ message: 'Note created successfully', note });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        res.status(500).json({ message: (error as Error).message });
     }
 }
 
@@ -47,8 +51,12 @@ export const updateNote = async (req: Request, res: Response) => {
         const updatedNote = await updateNoteService(Number(id), data, userId);
 
         res.status(200).json({ message: 'Note updated successfully', updatedNote });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        if ((error as Error).message === 'Note not found') {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        res.status(500).json({ message: (error as Error).message });
     }
 }
 
@@ -60,8 +68,14 @@ export const deleteNote = async (req: Request, res: Response) => {
     try {
         //delete note
         const deletedNote = await deleteNoteService(Number(id), userId);
-        res.status(200).json({ message: 'Note deleted successfully' });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+        res.status(200).json({ message: 'Note deleted successfully',
+            deletedNote
+         });
+    } catch (error: unknown) {
+        if ((error as Error).message === 'Note not found') {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        res.status(500).json({ message: (error as Error).message });
     }
 }

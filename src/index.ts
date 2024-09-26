@@ -1,5 +1,5 @@
 import cookieParser from 'cookie-parser';
-import express, { NextFunction, Request, Response, } from 'express';
+import express from 'express';
 import { logger } from './middleware/logger';
 import cors from 'cors';
 import { corsOptions } from '../config/corsOptions';

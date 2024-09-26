@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TaskModelSchema } from "./tasks.model";
 
 export const RoutineModelSchema = z.object({
-    id: z.number(),
+    id: z.string(),
     userId: z.string(),
     title: z.string(),
     description: z.string().nullable().optional(),

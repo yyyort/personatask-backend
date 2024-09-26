@@ -14,7 +14,7 @@ export const getRoutines = async (req: Request, res: Response) => {
   try {
     if (id) {
       //get routine
-      const routine = await getRoutineService({ userId, id: Number(id) });
+      const routine = await getRoutineService({ userId, id: id });
       res.json(routine);
     } else {
       //get all routines
@@ -51,7 +51,7 @@ export const updateRoutine = async (req: Request, res: Response) => {
 
   try {
     //update routine
-    const updatedRoutine = await updateRoutineService(data, userId, Number(id));
+    const updatedRoutine = await updateRoutineService(data, userId, id);
     res
       .status(200)
       .json({ message: "Routine updated successfully", updatedRoutine });
@@ -72,7 +72,7 @@ export const deleteRoutine = async (req: Request, res: Response) => {
     //delete routine
     const deletedRoutine = await deleteRoutineService({
       userId,
-      id: Number(id),
+      id: id,
     });
     res
       .status(200)

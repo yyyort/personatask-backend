@@ -34,7 +34,7 @@ export const createNote = async (req: Request, res: Response) => {
         //create note
         const note = await createNoteService(data, userId);
 
-        res.status(201).json({ message: 'Note created successfully', note });
+        res.status(201).json(note);
     } catch (error: unknown) {
         res.status(500).json({ message: (error as Error).message });
     }

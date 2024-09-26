@@ -9,6 +9,7 @@ export async function createTaskService(data: CreateTaskType, userId: string) {
         //create task
         const task: GetTaskType[] = await db.insert(taskTable).values({
             userId: userId,
+            routineId: data.routineId,
             name: data.name,
             description: data.description,
             status: data.status,
@@ -51,11 +52,6 @@ export async function getTaskService(data: { userId: string, id: number }) {
             )
         );
 
-        //if there is no task
-        if (tasks.length <= 0) {
-            throw new Error('Task not found');
-        }
-
         return tasks;
     } catch (error: unknown) {
         throw new Error((error as Error).message);
@@ -79,11 +75,6 @@ export async function getAllTasksService(userId: string) {
         ).from(taskTable).where(
             eq(taskTable.userId, userId)
         );
-
-        //if there is no task
-        if (tasks.length <= 0) {
-            throw new Error('Task not found');
-        }
 
         return tasks;
     } catch (error: unknown) {

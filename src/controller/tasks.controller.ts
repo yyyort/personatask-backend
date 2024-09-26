@@ -43,7 +43,7 @@ export const createTask = async (req: Request, res: Response) => {
 
   try {
     const task: GetTaskType = await createTaskService(data, userId);
-    res.status(201).json({ message: "Task created successfully", task });
+    res.status(201).json(task);
   } catch (error: unknown) {
     res.status(500).json({ message: (error as Error).message });
   }
@@ -58,6 +58,28 @@ export const updateTask = async (req: Request, res: Response) => {
     const updatedTask = await updateTaskService(data, Number(id), userId);
 
     res.status(200).json({ message: "Task updated successfully", updatedTask });
+  } catch (error: unknown) {
+    if ((error as Error).message === "Task not found") {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+//update status
+export const updateTaskStatus = async (req: Request, res: Response) => {
+  const { userId, id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedTask = await updateTaskService(
+      { status },
+      Number(id),
+      userId
+    );
+
+    res.status(200).json({ message: "Task status updated successfully", updatedTask });
   } catch (error: unknown) {
     if ((error as Error).message === "Task not found") {
       return res.status(404).json({ message: "Task not found" });

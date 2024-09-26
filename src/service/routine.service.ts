@@ -35,16 +35,11 @@ export async function createRoutineService(
 }
 
 /* get */
-export async function getRoutineService(data: { userId: string; id: number }) {
+export async function getRoutineService(data: { userId: string; id: string }) {
   try {
     //get routine
-    const routine: GetRoutineType[] = await db
-      .select({
-        id: routineTable.id,
-        userId: routineTable.userId,
-        title: routineTable.title,
-        description: routineTable.description,
-      })
+    const routine = await db
+      .select()
       .from(routineTable)
       .where(
         and(eq(routineTable.userId, data.userId), eq(routineTable.id, data.id))
@@ -62,7 +57,26 @@ export async function getRoutineService(data: { userId: string; id: number }) {
       throw new Error("Routine not found");
     }
 
-    return routine;
+    //format result
+    const result = routine.reduce((acc: GetRoutineType | null, row) => {
+      const routine = row.routine_table;
+      const task = row.task_table;
+
+      if (!acc) {
+        acc = {
+          ...routine,
+          tasks: [],
+        };
+      }
+
+      if (task) {
+        acc.tasks?.push(task);
+      }
+
+      return acc;
+    }, null as GetRoutineType | null);
+
+    return result;
   } catch (error: unknown) {
     throw new Error((error as Error).message);
   }
@@ -71,24 +85,41 @@ export async function getRoutineService(data: { userId: string; id: number }) {
 export async function getAllRoutineService(userId: string) {
   try {
     //get all routines
-    const routines: GetRoutineType[] = await db
-      .select({
-        id: routineTable.id,
-        userId: routineTable.userId,
-        title: routineTable.title,
-        description: routineTable.description,
-      })
+    const routines = await db
+      .select()
       .from(routineTable)
       .where(eq(routineTable.userId, userId))
       .innerJoin(
         taskTable,
         and(
-          eq(routineTable.id, taskTable.routineId),
+          eq(taskTable.routineId, routineTable.id),
           eq(taskTable.userId, userId)
         )
       );
 
-    return routines;
+    //format result
+    const result = routines.reduce<GetRoutineType[]>((acc, row) => {
+        const routine = row.routine_table;
+        const task = row.task_table;
+
+        const existingRoutine = acc.find((r) => r.id === routine.id);
+
+        if (!existingRoutine) {
+          acc.push({
+            ...routine,
+            tasks: task ? [task] : [],
+          });
+        } else {
+          if (task) {
+            existingRoutine.tasks?.push(task);
+          }
+        }
+
+        return acc;
+      }, []);
+        
+
+    return result;
   } catch (error: unknown) {
     throw new Error((error as Error).message);
   }
@@ -98,7 +129,7 @@ export async function getAllRoutineService(userId: string) {
 export async function updateRoutineService(
   data: UpdateRoutineType,
   userId: string,
-  routineId: number
+  routineId: string
 ) {
   try {
     //update routine
@@ -132,7 +163,7 @@ export async function updateRoutineService(
 /* delete */
 export async function deleteRoutineService(data: {
   userId: string;
-  id: number;
+  id: string;
 }) {
   try {
     //delete routine
@@ -147,13 +178,6 @@ export async function deleteRoutineService(data: {
         title: routineTable.title,
         description: routineTable.description,
       });
-
-    //delete all tasks associated with the routine
-    await db
-      .delete(taskTable)
-      .where(
-        and(eq(taskTable.userId, data.userId), eq(taskTable.routineId, data.id))
-      );
 
     //if there is no routine
     if (routine.length <= 0) {

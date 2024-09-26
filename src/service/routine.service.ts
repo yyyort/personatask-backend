@@ -13,22 +13,55 @@ export async function createRoutineService(
   userId: string
 ) {
   try {
-    //create routine
-    const routine: GetRoutineType[] = await db
-      .insert(routineTable)
-      .values({
-        userId: userId,
-        title: data.title,
-        description: data.description,
-      })
-      .returning({
-        id: routineTable.id,
-        userId: routineTable.userId,
-        title: routineTable.title,
-        description: routineTable.description,
-      });
+    if (!data) {
+      throw new Error("Data cannot be empty");
+    }
+ 
+    if ((data.tasks ?? []).length <= 0) {
+      throw new Error("Task cannot be empty");
+    }
 
-    return routine[0];
+    //transaction insert routine and tasks
+    const res = await db.transaction(async (trx) => {
+      //create routine
+      const routine: GetRoutineType[] = await trx
+        .insert(routineTable)
+        .values({
+          userId: userId,
+          title: data.title,
+          description: data.description,
+        })
+        .returning({
+          id: routineTable.id,
+          userId: routineTable.userId,
+          title: routineTable.title,
+          description: routineTable.description,
+        });
+
+      //create tasks
+      const tasks = await trx
+        .insert(taskTable)
+        .values(
+          (data.tasks ?? []).map((task) => ({
+            userId: userId,
+            routineId: routine[0].id,
+            name: task.name, // Assuming 'name' is the correct field
+            description: task.description ?? null, // Ensure description is nullable
+          }))
+        )
+        .returning({
+          id: taskTable.id,
+          userId: taskTable.userId,
+          routineId: taskTable.routineId,
+          title: taskTable.name,
+          description: taskTable.description,
+        });
+
+      return { routine: routine[0], tasks };
+    }
+  );
+  
+    return res;
   } catch (error: unknown) {
     throw new Error((error as Error).message);
   }
@@ -99,25 +132,24 @@ export async function getAllRoutineService(userId: string) {
 
     //format result
     const result = routines.reduce<GetRoutineType[]>((acc, row) => {
-        const routine = row.routine_table;
-        const task = row.task_table;
+      const routine = row.routine_table;
+      const task = row.task_table;
 
-        const existingRoutine = acc.find((r) => r.id === routine.id);
+      const existingRoutine = acc.find((r) => r.id === routine.id);
 
-        if (!existingRoutine) {
-          acc.push({
-            ...routine,
-            tasks: task ? [task] : [],
-          });
-        } else {
-          if (task) {
-            existingRoutine.tasks?.push(task);
-          }
+      if (!existingRoutine) {
+        acc.push({
+          ...routine,
+          tasks: task ? [task] : [],
+        });
+      } else {
+        if (task) {
+          existingRoutine.tasks?.push(task);
         }
+      }
 
-        return acc;
-      }, []);
-        
+      return acc;
+    }, []);
 
     return result;
   } catch (error: unknown) {

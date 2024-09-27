@@ -13,7 +13,8 @@ import {
 } from "../model/tasks.model";
 
 export const getTasks = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
+  const userId = req.body.userId;
 
   try {
     if (id) {
@@ -38,7 +39,7 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 export const createTask = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+  const userId = req.body.userId;
   const data: CreateTaskType = req.body;
 
   try {
@@ -51,7 +52,8 @@ export const createTask = async (req: Request, res: Response) => {
 
 //update task
 export const updateTask = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
+  const userId = req.body.userId;
   const data: UpdateTaskType = req.body;
 
   try {
@@ -69,8 +71,9 @@ export const updateTask = async (req: Request, res: Response) => {
 
 //update status
 export const updateTaskStatus = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
   const { status } = req.body;
+  const userId = req.body.userId;
 
   try {
     const updatedTask = await updateTaskService(
@@ -91,7 +94,8 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
 
 //delete task
 export const deleteTask = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
+  const userId = req.body.userId;
 
   try {
     //delete task

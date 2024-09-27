@@ -4,12 +4,18 @@ import {
   getRoutines,
   updateRoutine,
 } from "../controller/routine.controller";
+import { authValidator } from "../middleware/authHandler";
+
+
 
 const router = Router()
-  .get("/routines/:userId/:id", getRoutines)
-  .get("/routines/:userId", getRoutines)
-  .post("/routines/:userId", createRoutine)
-  .put("/routines/:user/Id:id", updateRoutine)
-  .delete("/routines/:userId/:id", updateRoutine);
+  .get("/routines/:id", getRoutines)
+  .get("/routines/", getRoutines)
+  .post("/routines/", createRoutine)
+  .put("/routines/:id", updateRoutine)
+  .delete("/routines/:id", updateRoutine);
+
+  //use auth middleware
+router.use(authValidator);
  
 export default router;

@@ -6,10 +6,12 @@ import {
   getRoutineService,
   updateRoutineService,
 } from "../service/routine.service";
+import { CreateRoutineType, UpdateRoutineType } from "../model/routine.model";
 
 /* get */
 export const getRoutines = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
+  const userId = req.body.userId;
 
   try {
     if (id) {
@@ -32,8 +34,8 @@ export const getRoutines = async (req: Request, res: Response) => {
 
 /* create */
 export const createRoutine = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const data = req.body;
+  const userId = req.body.userId;
+  const data: CreateRoutineType = req.body;
 
   try {
     //create routine
@@ -46,8 +48,9 @@ export const createRoutine = async (req: Request, res: Response) => {
 
 /* update */
 export const updateRoutine = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
-  const data = req.body;
+  const { id } = req.params;
+  const userId = req.body.userId;
+  const data: UpdateRoutineType = req.body;
 
   try {
     //update routine
@@ -66,7 +69,8 @@ export const updateRoutine = async (req: Request, res: Response) => {
 
 /* delete */
 export const deleteRoutine = async (req: Request, res: Response) => {
-  const { userId, id } = req.params;
+  const { id } = req.params;
+  const userId = req.body.userId;
 
   try {
     //delete routine

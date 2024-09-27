@@ -1,4 +1,5 @@
 import {
+  boolean,
   pgEnum,
   pgTable,
   serial,
@@ -8,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users_table", {
-  id: uuid("id").primaryKey().unique().defaultRandom().notNull(),
+  id: uuid("user_id").primaryKey().unique().defaultRandom().notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -39,7 +40,7 @@ export const routineTable = pgTable("routine_table", {
 export const taskStatus = pgEnum("task_status", ["due", "done", "overdue"]);
 
 export const taskTable = pgTable("task_table", {
-  id: serial("id").primaryKey().unique().notNull(),
+  id: serial("task_id").primaryKey().unique().notNull(),
   userId: uuid("task_user_id")
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -62,8 +63,24 @@ export const taskTable = pgTable("task_table", {
     .$onUpdate(() => new Date()),
 });
 
+export const GroupNoteTable = pgTable("group_note_table", {
+  id: uuid("group_note_id").primaryKey().unique().defaultRandom().notNull(),
+  userId: uuid("group_note_user_id")
+    .references(() => usersTable.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    })
+    .notNull(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
 export const noteTable = pgTable("note_table", {
-  id: serial("id").primaryKey().unique().notNull(),
+  id: serial("note_id").primaryKey().unique().notNull(),
   userId: uuid("note_user_id")
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -72,9 +89,16 @@ export const noteTable = pgTable("note_table", {
     .notNull(),
   title: text("title").notNull(),
   content: text("content"),
+  pinned: boolean("pinned").default(false).notNull(),
+  favorite: boolean("favorite").default(false).notNull(),
+  groupId: uuid("group_id").references(() => GroupNoteTable.id, {
+    onDelete: "cascade",
+    onUpdate: "cascade",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
 });
+

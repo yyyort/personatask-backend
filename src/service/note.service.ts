@@ -82,6 +82,54 @@ export async function updateNoteService(
   }
 }
 
+export const UpdateFavoriteNoteService = async (
+  noteId: number,
+  userId: string,
+  isFavorite: boolean
+) => {
+  try {
+    const note: NoteModelType[] = await db
+      .update(noteTable)
+      .set({
+        favorite: isFavorite,
+      })
+      .where(and(eq(noteTable.userId, userId), eq(noteTable.id, noteId)))
+      .returning();
+
+    if (note.length <= 0) {
+      throw new Error("Note not found");
+    }
+
+    return note[0];
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
+  }
+}
+
+export const UpdatePinnedNoteService = async (
+  noteId: number,
+  userId: string,
+  isPinned: boolean
+) => {
+  try {
+    const note: NoteModelType[] = await db
+      .update(noteTable)
+      .set({
+        pinned: isPinned,
+      })
+      .where(and(eq(noteTable.userId, userId), eq(noteTable.id, noteId)))
+      .returning();
+
+    if (note.length <= 0) {
+      throw new Error("Note not found");
+    }
+
+    return note[0];
+  } catch (error: unknown) {
+    throw new Error((error as Error).message);
+  }
+}
+
 /* delete */
 export async function deleteNoteService(noteId: number, userId: string) {
   try {

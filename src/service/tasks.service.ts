@@ -27,6 +27,7 @@ export async function createTaskService(data: CreateTaskType, userId: string) {
 
         return task[0];
     } catch (error: unknown) {
+        console.log((error as Error).message);
         throw new Error((error as Error).message);
     }
 };
